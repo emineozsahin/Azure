@@ -1,0 +1,170 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "eminestorageaccountType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_ZRS",
+                "Standard_GRS",
+                "Standard_RAGRS",
+                "Premium_LRS"
+            ]
+        },
+        "myubuntuvirtualmachineName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "myubuntuvirtualmachineAdminUserName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "myubuntuvirtualmachineAdminPassword": {
+            "type": "securestring"
+        },
+        "myubuntuvirtualmachineUbuntuOSVersion": {
+            "type": "string",
+            "defaultValue": "14.04.2-LTS",
+            "allowedValues": [
+                "12.04.5-LTS",
+                "14.04.2-LTS",
+                "15.04"
+            ]
+        }
+    },
+    "resources": [
+        {
+            "name": "[variables('eminestorageaccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [],
+            "tags": {
+                "displayName": "eminestorageaccount"
+            },
+            "properties": {
+                "accountType": "[parameters('eminestorageaccountType')]"
+            }
+        },
+        {
+            "name": "myvirtualnetwork",
+            "type": "Microsoft.Network/virtualNetworks",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [],
+            "tags": {
+                "displayName": "myvirtualnetwork"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('myvirtualnetworkPrefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('myvirtualnetworkSubnet1Name')]",
+                        "properties": {
+                            "addressPrefix": "[variables('myvirtualnetworkSubnet1Prefix')]"
+                        }
+                    },
+                    {
+                        "name": "[variables('myvirtualnetworkSubnet2Name')]",
+                        "properties": {
+                            "addressPrefix": "[variables('myvirtualnetworkSubnet2Prefix')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[variables('myubuntuvirtualmachineNicName')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', 'myvirtualnetwork')]"
+            ],
+            "tags": {
+                "displayName": "myubuntuvirtualmachineNic"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('myubuntuvirtualmachineSubnetRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('myubuntuvirtualmachineName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('eminestorageaccountName'))]",
+                "[concat('Microsoft.Network/networkInterfaces/', variables('myubuntuvirtualmachineNicName'))]"
+            ],
+            "tags": {
+                "displayName": "myubuntuvirtualmachine"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[variables('myubuntuvirtualmachineVmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('myubuntuvirtualmachineName')]",
+                    "adminUsername": "[parameters('myubuntuvirtualmachineAdminUsername')]",
+                    "adminPassword": "[parameters('myubuntuvirtualmachineAdminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('myubuntuvirtualmachineImagePublisher')]",
+                        "offer": "[variables('myubuntuvirtualmachineImageOffer')]",
+                        "sku": "[parameters('myubuntuvirtualmachineUbuntuOSVersion')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "myubuntuvirtualmachineOSDisk",
+                        "vhd": {
+                            "uri": "[concat('http://', variables('eminestorageaccountName'), '.blob.core.windows.net/', variables('myubuntuvirtualmachineStorageAccountContainerName'), '/', variables('myubuntuvirtualmachineOSDiskName'), '.vhd')]"
+                        },
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('myubuntuvirtualmachineNicName'))]"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "variables": {
+        "eminestorageaccountName": "[concat('eminestorageaccount')]",
+        "myvirtualnetworkPrefix": "10.0.0.0/16",
+        "myvirtualnetworkSubnet1Name": "Subnet-1",
+        "myvirtualnetworkSubnet1Prefix": "10.0.0.0/24",
+        "myvirtualnetworkSubnet2Name": "Subnet-2",
+        "myvirtualnetworkSubnet2Prefix": "10.0.1.0/24",
+        "myubuntuvirtualmachineImagePublisher": "Canonical",
+        "myubuntuvirtualmachineImageOffer": "UbuntuServer",
+        "myubuntuvirtualmachineOSDiskName": "myubuntuvirtualmachineOSDisk",
+        "myubuntuvirtualmachineVmSize": "Standard_D1",
+        "myubuntuvirtualmachineVnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'myvirtualnetwork')]",
+        "myubuntuvirtualmachineSubnetRef": "[concat(variables('myubuntuvirtualmachineVnetID'), '/subnets/', variables('myvirtualnetworkSubnet1Name'))]",
+        "myubuntuvirtualmachineStorageAccountContainerName": "vhds",
+        "myubuntuvirtualmachineNicName": "[concat(parameters('myubuntuvirtualmachineName'), 'NetworkInterface')]"
+    }
+}
