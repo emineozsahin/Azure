@@ -17,3 +17,8 @@ az deployment group create --resource-group MyResourceGroup  --template-file sto
 
 This command line prompts several [questions](https://github.com/emineozsahin/Azure/blob/main/Azure_ARM_templates/parametersFile.json) before starting to deploy the resources.  
 
+####Tip
+You may want to modify the variable name for the storage account in the custom-built ARM file to prevent concatenating some random letters and numbers to the storage account to make it unique if you are sure the storage name you assigned is unique.
+
+For example, I removed the functions uniq and id in the [ARM script] that I have generated.  
+"eminestorageaccountName": "[concat('eminestorageaccount')]"
