@@ -8,5 +8,12 @@
 az group create -l eastus2 -n MyResourceGroup
 ```
 
+Custome ARM templates can be generated using the "Build your own template in the editor" section under the "Deploy a Custome Templates" section on Azure Portal. Then the template can be deployed on the Azure portal. Also, the templated can be deployed via Azure CLI, as shown below.
 
+```
+# Deploy an Azure ARM template
+az deployment group create --resource-group MyResourceGroup  --template-file storage-account.json
+```
+
+This command line promt several questions 
 
