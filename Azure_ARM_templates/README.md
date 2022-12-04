@@ -15,5 +15,5 @@ Custome ARM templates can be generated using the "Build your own template in the
 az deployment group create --resource-group MyResourceGroup  --template-file storage-account.json
 ```
 
-This command line prompts several questions 
+This command line prompts several [questions](https://github.com/emineozsahin/Azure/blob/main/Azure_ARM_templates/parametersFile.json) 
 
