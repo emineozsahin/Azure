@@ -11,7 +11,8 @@ az vm create \
     --location eastus \
     --image Win2022AzureEditionCore \
     --public-ip-sku Standard \
-    --admin-username $2
+    --admin-username $2 \
+    --generate-ssh-keys  myWindowsVMssh_key.pem
 
 
 # Create an Ubuntu VM
@@ -22,4 +23,5 @@ az vm create \
     --image UbuntuLTS \
     --admin-username $2 \
     --generate-ssh-keys \
-    --public-ip-sku Standard
+    --public-ip-sku Standard \
+    --ssh-key-values myUbuntuVMssh_key.pem

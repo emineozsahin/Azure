@@ -1,0 +1,170 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "MyUbuntuVMName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "MyUbuntuVMAdminUserName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "MyUbuntuVMAdminPassword": {
+            "type": "securestring"
+        },
+        "MyUbuntuVMUbuntuOSVersion": {
+            "type": "string",
+            "defaultValue": "14.04.2-LTS",
+            "allowedValues": [
+                "12.04.5-LTS",
+                "14.04.2-LTS",
+                "15.04"
+            ]
+        },
+        "mystorageaccountemineType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_ZRS",
+                "Standard_GRS",
+                "Standard_RAGRS",
+                "Premium_LRS"
+            ]
+        }
+    },
+    "resources": [
+        {
+            "name": "[variables('MyUbuntuVMNicName')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', 'MyVnet')]"
+            ],
+            "tags": {
+                "displayName": "MyUbuntuVMNic"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('MyUbuntuVMSubnetRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('MyUbuntuVMName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('mystorageaccountemineName'))]",
+                "[concat('Microsoft.Network/networkInterfaces/', variables('MyUbuntuVMNicName'))]"
+            ],
+            "tags": {
+                "displayName": "MyUbuntuVM"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[variables('MyUbuntuVMVmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('MyUbuntuVMName')]",
+                    "adminUsername": "[parameters('MyUbuntuVMAdminUsername')]",
+                    "adminPassword": "[parameters('MyUbuntuVMAdminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('MyUbuntuVMImagePublisher')]",
+                        "offer": "[variables('MyUbuntuVMImageOffer')]",
+                        "sku": "[parameters('MyUbuntuVMUbuntuOSVersion')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "MyUbuntuVMOSDisk",
+                        "vhd": {
+                            "uri": "[concat('http://', variables('mystorageaccountemineName'), '.blob.core.windows.net/', variables('MyUbuntuVMStorageAccountContainerName'), '/', variables('MyUbuntuVMOSDiskName'), '.vhd')]"
+                        },
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('MyUbuntuVMNicName'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "MyVnet",
+            "type": "Microsoft.Network/virtualNetworks",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [],
+            "tags": {
+                "displayName": "MyVnet"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('MyVnetPrefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('MyVnetSubnet1Name')]",
+                        "properties": {
+                            "addressPrefix": "[variables('MyVnetSubnet1Prefix')]"
+                        }
+                    },
+                    {
+                        "name": "[variables('MyVnetSubnet2Name')]",
+                        "properties": {
+                            "addressPrefix": "[variables('MyVnetSubnet2Prefix')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[variables('mystorageaccountemineName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [],
+            "tags": {
+                "displayName": "mystorageaccountemine"
+            },
+            "properties": {
+                "accountType": "[parameters('mystorageaccountemineType')]"
+            }
+        }
+    ],
+    "variables": {
+        "MyUbuntuVMImagePublisher": "Canonical",
+        "MyUbuntuVMImageOffer": "UbuntuServer",
+        "MyUbuntuVMOSDiskName": "MyUbuntuVMOSDisk",
+        "MyUbuntuVMVmSize": "Standard_D1",
+        "MyUbuntuVMVnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'MyVnet')]",
+        "MyUbuntuVMSubnetRef": "[concat(variables('MyUbuntuVMVnetID'), '/subnets/', variables('MyVnetSubnet1Name'))]",
+        "MyUbuntuVMStorageAccountContainerName": "vhds",
+        "MyUbuntuVMNicName": "[concat(parameters('MyUbuntuVMName'), 'NetworkInterface')]",
+        "MyVnetPrefix": "10.0.0.0/16",
+        "MyVnetSubnet1Name": "Subnet-1",
+        "MyVnetSubnet1Prefix": "10.0.0.0/24",
+        "MyVnetSubnet2Name": "Subnet-2",
+        "MyVnetSubnet2Prefix": "10.0.1.0/24",
+        "mystorageaccountemineName": "[concat('mystorageaccountemine', uniqueString(resourceGroup().id))]"
+    }
+}
