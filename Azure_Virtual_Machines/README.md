@@ -4,8 +4,6 @@ This project includes a [bash file](https://github.com/emineozsahin/Azure/blob/m
 
 Here is a [pdf file](https://github.com/emineozsahin/Azure/blob/main/Azure_Virtual_Machines/VM.pdf) to show the steps.
 
-I generated a key in Azure portal for WindowsVMs
-
 I used Microsoft Remote Control App to connect Windows VM.
 
 ```sh
@@ -15,7 +13,7 @@ az deployment group create --resource-group emine-dev  --template-file arm_for_v
 # Connect to the Ubuntu VM via ssh
 ssh -i ~/.ssh/myUbuntuVMssh_key.pem emine@20.168.210.173
 
-#I also tried to use ssh key to connect Windows VM.
+#I also generated a key in Azure portal for WindowsVMs to use ssh key to connect Windows VM.
 # mv the downloaded key to the .ssh
 mv Downloads/myWindowsVMssh_key.pem ~/.ssh/
 
