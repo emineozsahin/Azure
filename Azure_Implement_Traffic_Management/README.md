@@ -1,13 +1,37 @@
-#
+# IMPLEMENT TRAFFIC MANAGEMENT IN AZURE
+
+A github account called MicrosoftLearning has a [Lab6](https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_06-Implement_Network_Traffic_Management.md) which is the source of this project. It explains each task step by step.
+
+I try to add two other ways to provision the environment:
+
+1. Azure CLI
+2. Terraform
+: under construction
+
+I followed the Microsoft Learning steps for the task 2-6.
+
+## Provision the environment
+[Provisioning](https://www.redhat.com/en/topics/automation/what-is-provisioning) is the process of setting up IT infrastructure. In this repository I write a [bash script](https://github.com/emineozsahin/Azure/blob/main/Azure_Implement_Traffic_Management/implement_traffic_management.sh) for provisioning the environment that is figured in the [project.png](https://github.com/emineozsahin/Azure/blob/main/Azure_Implement_Traffic_Management/project.png) file.
+
+```sh
+sh implement_traffic_management.sh
+```
+
+I have also used the arm templates obtained from MicrosoftLearning-Lab6 as a second method to this repository following the [instructions](https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_06-Implement_Network_Traffic_Management.md).
+
+I'll update the repository by adding terraform files as a third way to automate the provisioning.
+
+## Configure hub and spoke network topology
+hub: az104-06-vnet01
+spoke: az104-06-vnet2 and az104-06-vnet3
+
+## Test transitivity of virtual networking peering
+
+## Configure routing in the hub and spoke topology
+
+## Implement Azure Load Balancer
+
+## Implement Azure Application Gateway
 
 
-1. Provision the environment
-2. Configure hub and spoke network topology
-3. Test transitivity of virtual networking peering
-4. Configure routing in the hub and spoke topology
-5. Implement Azure Load Balancer
-6. Implement Azure Application Gateway
 
-
-
-az configure --defaults location=<location>
