@@ -20,8 +20,6 @@ New-AzResourceGroupDeployment `
 # list the available skus
 # az vm list-skus --location "eastus2"  -o table --query "[? contains(name,'Standard_D2s')].name"
 
-
-
-#
+# Cleaning the environment
 #Get-AzResourceGroup -Name 'az104-07*'
 Get-AzResourceGroup -Name 'az104-07*' | Remove-AzResourceGroup -Force -AsJob
