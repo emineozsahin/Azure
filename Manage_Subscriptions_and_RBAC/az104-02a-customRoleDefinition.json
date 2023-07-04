@@ -10,7 +10,7 @@
     ],
     "AssignableScopes": [
         "/providers/Microsoft.Management/managementGroups/az104-02-mg1",
-        "/subscriptions/SUBSCRIPTION_ID"
+        "/subscriptions/d8efbdae-fe14-40fd-a26e-3167035edd0f"
     ]
  }
  
