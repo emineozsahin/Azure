@@ -1,0 +1,4 @@
+# .gitignore
+
+# temp sub-directory (ended with a directory separator)
+temp/
