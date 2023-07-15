@@ -1,12 +1,11 @@
 # IMPLEMENT TRAFFIC MANAGEMENT IN AZURE
 
-A github account called MicrosoftLearning has a [Lab6](https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_06-Implement_Network_Traffic_Management.md) which is the source of this project. It explains each task step by step.
+A github account called MicrosoftLearning has a [Lab6](https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_06-Implement_Network_Traffic_Management.md) which is the source of this project.
 
 # Two other ways to provision the environment:
 
-1. Azure CLI
+1. Azure CLI: upload the az104-06-vms-loop-parameters.json and az104-06-vms-loop-template.json files to Azure CLI and run the implement_traffic_management.ps1 script
 2. Terraform
-: under construction
 
 I followed the Microsoft Learning steps for the task 2-6.
 
