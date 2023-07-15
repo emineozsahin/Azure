@@ -2,7 +2,7 @@
 
 A github account called MicrosoftLearning has a [Lab6](https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_06-Implement_Network_Traffic_Management.md) which is the source of this project. It explains each task step by step.
 
-I try to add two other ways to provision the environment:
+# Two other ways to provision the environment:
 
 1. Azure CLI
 2. Terraform
