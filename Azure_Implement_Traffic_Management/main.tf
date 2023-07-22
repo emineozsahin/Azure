@@ -15,20 +15,20 @@ terraform {
   }
 }
 
-# Resouce Group
-resource "azurerm_resource_group" "terraform_sample" {
-    name     = "traffic"
-    location = "${var.arm_region}"
-}
-
 # Variables
-variable "arm_region" {
+variable "loc" {
   description = "The Azure region to create things in."
   default     = "Canada Central"
 }
 
-variable "arm_frontend_instances" {
-  description = "Number of front instances"
-  default     = 2
+
+# Resouce Group
+resource "azurerm_resource_group" "terraform_sample" {
+    name     = "az104-06"
+    location = "${var.loc}"
 }
+
+
+
+
 
